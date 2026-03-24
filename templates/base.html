@@ -17,6 +17,9 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <!-- Aurora Background Nodes -->
+    <div class="aurora-top" aria-hidden="true"></div>
+    <div class="aurora-bottom" aria-hidden="true"></div>
     {% include 'components/navbar.html' %}
 
     <div class="app-wrapper {% block wrapper_class %}{% endblock %}">
@@ -56,6 +59,29 @@
                 localStorage.setItem('theme', 'dark');
             }
         }
+
+        // Countup animation for stat values
+        function animateCountUp(el) {
+            const target = parseFloat(el.textContent.replace('%', ''));
+            if (isNaN(target)) return;
+            const suffix = el.textContent.includes('%') ? '%' : '';
+            const duration = 900;
+            const start = performance.now();
+            function update(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                el.textContent = Math.round(target * ease) + suffix;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+                document.querySelectorAll('.stat-value').forEach(el => animateCountUp(el));
+            }
+        });
     </script>
     {% block extra_js %}{% endblock %}
 </body>

@@ -74,8 +74,8 @@
 
 <!-- Result Modal -->
 <div id="resultModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
-    <div style="background:white;border-radius:var(--radius);padding:2.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);animation:popIn 0.3s ease;">
-        <div id="scoreCircle" style="width:110px;height:110px;border-radius:50%;margin:0 auto 1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid #16a34a;background:#dcfce7;">
+    <div style="background:var(--surface);border-radius:var(--radius);padding:2.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);animation:popIn 0.3s ease;border:1px solid var(--border);">
+        <div id="scoreCircle" style="width:110px;height:110px;border-radius:50%;margin:0 auto 1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid var(--success-text);background:var(--success-bg);">
             <div id="modalScoreNum" style="font-family:'Space Grotesk',sans-serif;font-size:1.9rem;font-weight:800;line-height:1;">0/0</div>
             <div id="modalPct" style="font-size:0.78rem;font-weight:600;opacity:0.75;">0%</div>
         </div>

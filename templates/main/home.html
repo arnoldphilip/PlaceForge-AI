@@ -12,7 +12,7 @@
             <div class="blob blob-2"></div>
             <div class="blob blob-3"></div>
         </div>
-        <div class="hero-content">
+        <div class="hero-content animate-reveal">
             <h1 class="hero-title">Welcome to Your <span class="gradient-text">Learning Hub</span></h1>
             <p class="hero-subtitle">Practice, learn, and improve your skills with structured content, real-time quizzes, and personalized guidance.</p>
             {% if user.is_authenticated %}
@@ -29,19 +29,19 @@
     <!-- Category Cards -->
     <section class="categories">
         <div class="cards-grid">
-            <div class="category-card card-aptitude">
+            <div class="category-card card-aptitude animate-reveal delay-1">
                 <div class="card-icon">💡</div>
                 <h2>Aptitude</h2>
                 <p>Sharpen your logical and problem-solving skills</p>
                 <a href="{% if user.is_authenticated %}{% url 'dashboard:practice' %}?category=aptitude{% else %}{% url 'accounts:signup' %}{% endif %}" class="card-btn">Start Practice</a>
             </div>
-            <div class="category-card card-verbal">
+            <div class="category-card card-verbal animate-reveal delay-2">
                 <div class="card-icon">💬</div>
                 <h2>Verbal</h2>
                 <p>Improve grammar, vocabulary, and communication</p>
                 <a href="{% if user.is_authenticated %}{% url 'dashboard:practice' %}?category=verbal{% else %}{% url 'accounts:signup' %}{% endif %}" class="card-btn">Explore Topics</a>
             </div>
-            <div class="category-card card-tech">
+            <div class="category-card card-tech animate-reveal delay-3">
                 <div class="card-icon">⚙️</div>
                 <h2>Tech</h2>
                 <p>Master programming, core subjects, and coding challenges</p>
@@ -52,7 +52,7 @@
 
     <!-- AI Assistant Section -->
     <section class="ai-section">
-        <div class="ai-card">
+        <div class="ai-card animate-reveal delay-4">
             <div class="ai-icon">🤖</div>
             <div class="ai-text">
                 <h3>AI Assistant</h3>
