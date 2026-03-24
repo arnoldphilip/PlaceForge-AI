@@ -346,7 +346,7 @@ a:hover { color: var(--primary-dark); }
   box-shadow: var(--shadow-lg); transition: transform 0.3s, box-shadow 0.3s;
   position: relative; overflow: hidden;
 }
-.category-card::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.08); border-radius: inherit; }
+.category-card::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.08); border-radius: inherit; pointer-events: none; }
 .category-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
 .card-aptitude { background: linear-gradient(135deg, var(--card-aptitude-from), var(--card-aptitude-to)); }
 .card-verbal { background: linear-gradient(135deg, var(--card-verbal-from), var(--card-verbal-to)); }
@@ -359,6 +359,7 @@ a:hover { color: var(--primary-dark); }
   background: rgba(255,255,255,0.25); color: white; font-weight: 600;
   border: 1.5px solid rgba(255,255,255,0.5);
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  position: relative; z-index: 2;
 }
 .card-btn:hover { background: white; color: var(--primary); transform: translateY(-2px); }
 
