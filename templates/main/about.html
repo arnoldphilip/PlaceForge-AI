@@ -4,71 +4,129 @@
 
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto; width: 100%; padding-bottom: 3rem;">
-    <div style="background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 3rem; border: 1px solid var(--border);">
-        <div class="page-header" style="justify-content: center; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+    <div
+        style="background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 3rem; border: 1px solid var(--border);">
+        <div class="page-header"
+            style="justify-content: center; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem;">
             <h1 style="color: var(--text);">About PlaceForge AI</h1>
         </div>
-        
-        <div style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; display: flex; flex-direction: column; gap: 1.5rem;">
-            <p>Welcome to <strong>PlaceForge AI</strong>, your ultimate companion for placement preparation. We believe that everyone deserves the opportunity to excel in their career journeys.</p>
-            
-            <p>Our platform utilizes state-of-the-art AI technology to provide you with personalized learning experiences across <strong>Aptitude, Verbal, and Technical</strong> domains. By integrating local LLMs like Llama3, we ensure that you get instantaneous, detailed, and completely private tutoring.</p>
-            
-            <h2 style="color: var(--primary); margin-top: 1rem; border-top: 1px dashed var(--border); padding-top: 1.5rem;">Our Mission</h2>
-            <p>To democratize quality education and interview preparation by making advanced AI tutoring accessible, reliable, and highly effective for students everywhere. We want you to walk into every interview with absolute confidence.</p>
-            
-            <h2 style="color: var(--primary); margin-top: 1.5rem; border-top: 1px dashed var(--border); padding-top: 1.5rem;">Meet the Developers</h2>
-            <p>PlaceForge AI is built by a passionate team dedicated to empowering students. The creative minds and engineers behind this platform are:</p>
-            
+
+        <div
+            style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; display: flex; flex-direction: column; gap: 1.5rem;">
+            <p>Welcome to <strong>PlaceForge AI</strong>, your ultimate companion for placement preparation. We believe
+                that everyone deserves the opportunity to excel in their career journeys.</p>
+
+            <p>Our platform utilizes state-of-the-art AI technology to provide you with personalized learning
+                experiences across <strong>Aptitude, Verbal, and Technical</strong> domains. By integrating local LLMs
+                like Llama3, we ensure that you get instantaneous, detailed, and completely private tutoring.</p>
+
+            <h2
+                style="color: var(--primary); margin-top: 1rem; border-top: 1px dashed var(--border); padding-top: 1.5rem;">
+                Our Mission</h2>
+            <p>To democratize quality education and interview preparation by making advanced AI tutoring accessible,
+                reliable, and highly effective for students everywhere. We want you to walk into every interview with
+                absolute confidence.</p>
+
+            <h2
+                style="color: var(--primary); margin-top: 1.5rem; border-top: 1px dashed var(--border); padding-top: 1.5rem;">
+                Meet the Developers</h2>
+            <p>PlaceForge AI is built by a passionate team dedicated to empowering students. The creative minds and
+                engineers behind this platform are:</p>
+
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-top: 1.5rem;">
                 <!-- 1. Arnold -->
-                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
+                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
                     <div style="position: relative; margin-bottom: 1.5rem;">
-                        <div style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;"></div>
-                        <img src="{% static 'img/team/Arnold Philip.jpeg' %}" alt="Arnold Philip" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
+                        <div
+                            style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;">
+                        </div>
+                        <img src="{% static 'img/team/Arnold Philip.jpeg' %}" alt="Arnold Philip"
+                            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
                     </div>
-                    <h4 style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">Arnold Philip</h4>
-                    <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Core Developer</span>
+                    <h4
+                        style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">
+                        Arnold Philip</h4>
+                    <span
+                        style="font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Backend
+                        Developer</span>
                 </div>
 
                 <!-- 2. Dharun -->
-                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
+                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
                     <div style="position: relative; margin-bottom: 1.5rem;">
-                        <div style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;"></div>
-                        <img src="{% static 'img/team/Dharun Kumar S.jpeg' %}" alt="Dharun Kumar S" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
+                        <div
+                            style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;">
+                        </div>
+                        <img src="{% static 'img/team/Dharun Kumar S.jpeg' %}" alt="Dharun Kumar S"
+                            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
                     </div>
-                    <h4 style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">Dharun Kumar S</h4>
-                    <span style="font-size: 0.8rem; color: var(--secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Core Developer</span>
+                    <h4
+                        style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">
+                        Dharun Kumar S</h4>
+                    <span
+                        style="font-size: 0.8rem; color: var(--secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Full Stack
+                        Developer</span>
                 </div>
 
                 <!-- 3. Deepak Kumar K M -->
-                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
+                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
                     <div style="position: relative; margin-bottom: 1.5rem;">
-                        <div style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;"></div>
-                        <img src="{% static 'img/team/Deepak Kumar K M.jpeg' %}" alt="Deepak Kumar K M" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
+                        <div
+                            style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;">
+                        </div>
+                        <img src="{% static 'img/team/Deepak Kumar K M.jpeg' %}" alt="Deepak Kumar K M"
+                            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
                     </div>
-                    <h4 style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem; text-align: center;">Deepak Kumar K M</h4>
-                    <span style="font-size: 0.8rem; color: var(--accent-orange); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Core Developer</span>
+                    <h4
+                        style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem; text-align: center;">
+                        Deepak Kumar K M</h4>
+                    <span
+                        style="font-size: 0.8rem; color: var(--accent-orange); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">AI
+                        Engineer</span>
                 </div>
 
                 <!-- 4. Deepak P -->
-                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
+                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
                     <div style="position: relative; margin-bottom: 1.5rem;">
-                        <div style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;"></div>
-                        <img src="{% static 'img/team/Deepak P.jpeg' %}" alt="Deepak P" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
+                        <div
+                            style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;">
+                        </div>
+                        <img src="{% static 'img/team/Deepak P.jpeg' %}" alt="Deepak P"
+                            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
                     </div>
-                    <h4 style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">Deepak P</h4>
-                    <span style="font-size: 0.8rem; color: var(--accent-teal); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Core Developer</span>
+                    <h4
+                        style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">
+                        Deepak P</h4>
+                    <span
+                        style="font-size: 0.8rem; color: var(--accent-teal); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Frontend
+                        Developer</span>
                 </div>
 
                 <!-- 5. Anfaz -->
-                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
+                <div style="background: linear-gradient(145deg, var(--surface), var(--surface-2)); border-radius: var(--radius); padding: 2.5rem 1.5rem; box-shadow: var(--shadow); width: 220px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--primary)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'; this.style.borderColor='var(--border)';">
                     <div style="position: relative; margin-bottom: 1.5rem;">
-                        <div style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;"></div>
-                        <img src="{% static 'img/team/Anfaz Sulthan.jpeg' %}" alt="Anfaz Sulthan" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
+                        <div
+                            style="position: absolute; inset: -6px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; opacity: 0.5; filter: blur(8px); z-index: 0;">
+                        </div>
+                        <img src="{% static 'img/team/Anfaz Sulthan.jpeg' %}" alt="Anfaz Sulthan"
+                            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); position: relative; z-index: 1;">
                     </div>
-                    <h4 style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">Anfaz Sulthan</h4>
-                    <span style="font-size: 0.8rem; color: var(--accent-green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Core Developer</span>
+                    <h4
+                        style="color: var(--text); font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem;">
+                        Anfaz Sulthan</h4>
+                    <span
+                        style="font-size: 0.8rem; color: var(--accent-green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">UI/UX
+                        Designer</span>
                 </div>
             </div>
         </div>
