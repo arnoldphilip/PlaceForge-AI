@@ -4,7 +4,7 @@
 {% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
 
 {% block content %}
-<div class="page-header">
+<div class="page-header animate-reveal">
     <div class="header-user-info">
         <div class="header-avatar-container">
             {% if profile.avatar %}
@@ -31,28 +31,28 @@
 
 <!-- Stats Cards -->
 <div class="stats-row">
-    <div class="stat-card stat-blue">
+    <div class="stat-card stat-blue animate-reveal delay-1">
         <div class="stat-icon">✏️</div>
         <div class="stat-body">
             <div class="stat-value">{{ total_attempted }}</div>
             <div class="stat-label">Questions Attempted</div>
         </div>
     </div>
-    <div class="stat-card stat-green">
+    <div class="stat-card stat-green animate-reveal delay-2">
         <div class="stat-icon">✅</div>
         <div class="stat-body">
             <div class="stat-value">{{ total_correct }}</div>
             <div class="stat-label">Correct Answers</div>
         </div>
     </div>
-    <div class="stat-card stat-orange">
+    <div class="stat-card stat-orange animate-reveal delay-3">
         <div class="stat-icon">🎯</div>
         <div class="stat-body">
             <div class="stat-value">{{ accuracy }}%</div>
             <div class="stat-label">Accuracy Rate</div>
         </div>
     </div>
-    <div class="stat-card stat-purple">
+    <div class="stat-card stat-purple animate-reveal delay-4">
         <div class="stat-icon">🔥</div>
         <div class="stat-body">
             <div class="stat-value">{{ profile.streak_days }}</div>
@@ -79,7 +79,7 @@
             <span class="prog-pct">{{ item.progress.accuracy }}%</span>
         </div>
         <div class="progress-bar-track">
-            <div class="progress-bar-fill" style="width: {{ item.progress.accuracy }}%"></div>
+            <div class="progress-bar-fill {% if item.course.category == 'aptitude' %}apt{% elif item.course.category == 'verbal' %}vrb{% else %}tch{% endif %}" style="width: {{ item.progress.accuracy }}%"></div>
         </div>
         <div class="prog-footer">
             <span>{{ item.progress.questions_attempted }} attempted</span>
