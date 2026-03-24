@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Sign Up - PlaceForge AI{% endblock %}
+{% block wrapper_class %}auth-wrapper{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-left">
+        <div class="auth-branding">
+            <div class="auth-logo">
+                <img src="{% static 'img/logo.png' %}" alt="Logo" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: -10px;">
+            </div>
+            <h1>Join PlaceForge AI</h1>
+            <p>Start your learning journey today — completely free!</p>
+            <div class="auth-features">
+                <div class="auth-feature">🚀 Get started in 60 seconds</div>
+                <div class="auth-feature">📚 Access all study materials</div>
+                <div class="auth-feature">🤖 AI-powered chatbot</div>
+                <div class="auth-feature">🏆 Compete on leaderboard</div>
+            </div>
+        </div>
+    </div>
+    <div class="auth-right">
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <p class="auth-desc">Fill in your details to get started</p>
+
+            <form method="post" class="auth-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Profile Picture (Optional)</label>
+                    <input type="file" name="avatar" accept="image/*">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" placeholder="First name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" placeholder="Last name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Your email address" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password1" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="password2" placeholder="Repeat your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Account →</button>
+            </form>
+
+            <p class="auth-switch">Already have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

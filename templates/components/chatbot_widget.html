@@ -1,0 +1,412 @@
+{% if user.is_authenticated %}
+<style>
+/* ========== CHATBOT WIDGET - 3 STATE SYSTEM ========== */
+
+/* --- Container: wraps button + hover panel as single hover zone --- */
+.cw-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 0;
+}
+
+/* --- STATE 1: Floating Circle Button (Idle) --- */
+.cw-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex-shrink: 0;
+    position: relative;
+}
+.cw-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+.cw-btn svg {
+    width: 28px;
+    height: 28px;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+/* Notification badge */
+.cw-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 18px;
+    height: 18px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+}
+
+/* --- STATE 2: Hover Preview Panel (Unfurl Left) --- */
+.cw-preview {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 30px;
+    padding: 0;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease,
+                padding 0.35s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-right: -8px;
+    padding-right: 16px;
+    pointer-events: none;
+}
+
+/* Show preview on container hover, ONLY when chat is NOT open */
+.cw-container:not(.cw-open):hover .cw-preview {
+    max-width: 250px;
+    opacity: 1;
+    padding: 10px 20px 10px 14px;
+    pointer-events: all;
+}
+
+.cw-preview-icon {
+    font-size: 22px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+.cw-preview-text {
+    display: flex;
+    flex-direction: column;
+}
+.cw-preview-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: #1e293b;
+}
+.cw-preview-sub {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* --- STATE 3: Full Chat Window (Active) --- */
+.cw-chat {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 370px;
+    height: 500px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9998;
+
+    /* Hidden by default */
+    opacity: 0;
+    transform: scale(0.5) translateY(40px);
+    transform-origin: bottom right;
+    pointer-events: none;
+    transition: opacity 0.3s ease,
+                transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cw-chat.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: all;
+}
+
+/* Chat Header */
+.cw-chat-header {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+.cw-chat-header-icon {
+    font-size: 22px;
+    margin-right: 12px;
+}
+.cw-chat-header-info {
+    flex: 1;
+}
+.cw-chat-header-title {
+    font-weight: 700;
+    font-size: 15px;
+}
+.cw-chat-header-sub {
+    font-size: 12px;
+    opacity: 0.8;
+}
+.cw-chat-close {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.cw-chat-close:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* Chat Messages */
+.cw-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc;
+}
+.cw-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+.cw-msg-bot {
+    align-self: flex-start;
+    background: white;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 4px;
+}
+.cw-msg-user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+/* Chat Input */
+.cw-input-area {
+    display: flex;
+    padding: 12px;
+    gap: 8px;
+    border-top: 1px solid #e2e8f0;
+    background: white;
+}
+.cw-input-area input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 24px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+.cw-input-area input:focus {
+    border-color: #6366f1;
+}
+.cw-input-area button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+.cw-input-area button:hover {
+    transform: scale(1.1);
+}
+
+/* Typing indicator */
+.cw-typing span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #94a3b8;
+    margin: 0 2px;
+    animation: cwBounce 1.4s infinite both;
+}
+.cw-typing span:nth-child(2) { animation-delay: 0.16s; }
+.cw-typing span:nth-child(3) { animation-delay: 0.32s; }
+@keyframes cwBounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-6px); }
+}
+
+/* Button morphing when chat is open */
+.cw-container.cw-open .cw-btn svg {
+    transform: rotate(45deg);
+}
+
+/* Rendered Markdown Styles */
+.cw-markdown p { margin: 0 0 8px 0; }
+.cw-markdown p:last-child { margin-bottom: 0; }
+.cw-markdown code { background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
+.cw-markdown pre { background: #1e293b; color: #f8fafc; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; font-size: 0.85em; }
+.cw-markdown pre code { background: none; padding: 0; color: inherit; }
+.cw-markdown ul, .cw-markdown ol { margin: 0 0 8px 0; padding-left: 20px; }
+.cw-markdown li { margin-bottom: 4px; }
+.cw-markdown h1, .cw-markdown h2, .cw-markdown h3, .cw-markdown h4 { margin: 12px 0 8px 0; font-size: 1.1em; font-weight: bold; }
+
+/* --- MOBILE: disable hover, tap to open --- */
+@media (hover: none) {
+    .cw-container:not(.cw-open):hover .cw-preview {
+        max-width: 0;
+        opacity: 0;
+        padding: 0;
+    }
+}
+</style>
+
+<!-- ===== HOVER ZONE CONTAINER ===== -->
+<div class="cw-container" id="cwContainer">
+
+    <!-- Hover Preview Panel -->
+    <div class="cw-preview">
+        <div class="cw-preview-icon">🤖</div>
+        <div class="cw-preview-text">
+            <div class="cw-preview-title">PlaceForge AI</div>
+            <div class="cw-preview-sub">Ask me anything!</div>
+        </div>
+    </div>
+
+    <!-- Floating Circle Button -->
+    <button class="cw-btn" id="cwBtn" onclick="cwToggle()" aria-label="Open chatbot">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
+</div>
+
+<!-- ===== FULL CHAT WINDOW ===== -->
+<div class="cw-chat" id="cwChat">
+    <div class="cw-chat-header">
+        <div class="cw-chat-header-icon">🤖</div>
+        <div class="cw-chat-header-info">
+            <div class="cw-chat-header-title">PlaceForge AI</div>
+            <div class="cw-chat-header-sub">Powered by Llama3</div>
+        </div>
+        <button class="cw-chat-close" onclick="cwClose()" aria-label="Close chat">✕</button>
+    </div>
+
+    <div class="cw-messages" id="cwMessages">
+        <div class="cw-msg cw-msg-bot">
+            👋 Hi {{ user.first_name|default:user.username }}! I'm your PlaceForge AI Assistant.
+            Ask me anything about Aptitude, Verbal, or Tech!
+        </div>
+    </div>
+
+    <div class="cw-input-area">
+        <input type="text" id="cwInput" placeholder="Type your question..." onkeypress="if(event.key==='Enter')cwSend()">
+        <button onclick="cwSend()" aria-label="Send message">➤</button>
+    </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+const CW_SEND_URL  = "{% url 'chatbot:send_message' %}";
+const CW_CSRF = "{{ csrf_token }}";
+
+let cwIsOpen = false;
+
+function cwToggle() {
+    cwIsOpen ? cwClose() : cwOpen();
+}
+
+function cwOpen() {
+    cwIsOpen = true;
+    document.getElementById('cwContainer').classList.add('cw-open');
+    document.getElementById('cwChat').classList.add('visible');
+    setTimeout(() => document.getElementById('cwInput').focus(), 350);
+}
+
+function cwClose() {
+    cwIsOpen = false;
+    document.getElementById('cwContainer').classList.remove('cw-open');
+    document.getElementById('cwChat').classList.remove('visible');
+}
+
+async function cwSend() {
+    const input = document.getElementById('cwInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const msgs = document.getElementById('cwMessages');
+
+    // User message
+    const userDiv = document.createElement('div');
+    userDiv.className = 'cw-msg cw-msg-user';
+    userDiv.textContent = msg;
+    msgs.appendChild(userDiv);
+    input.value = '';
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // Typing indicator
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'cw-msg cw-msg-bot';
+    typingDiv.innerHTML = '<span class="cw-typing"><span></span><span></span><span></span></span>';
+    msgs.appendChild(typingDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    try {
+        const res = await fetch(CW_SEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CW_CSRF },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        typingDiv.remove();
+
+        const botDiv = document.createElement('div');
+        botDiv.className = 'cw-msg cw-msg-bot cw-markdown';
+        if (window.marked && data.response) {
+            botDiv.innerHTML = marked.parse(data.response);
+        } else {
+            botDiv.textContent = data.response || 'Sorry, I could not process that.';
+        }
+        msgs.appendChild(botDiv);
+    } catch (e) {
+        typingDiv.remove();
+        const errDiv = document.createElement('div');
+        errDiv.className = 'cw-msg cw-msg-bot';
+        errDiv.style.color = '#ef4444';
+        errDiv.textContent = 'Connection error. Please try again.';
+        msgs.appendChild(errDiv);
+    }
+    msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+{% endif %}

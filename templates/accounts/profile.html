@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}My Profile - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Profile</h1>
+    <p>Manage your account details and preferences</p>
+</div>
+
+<div class="profile-layout">
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeModal()">
+        <span class="image-modal-close">&times;</span>
+        <img class="image-modal-content" id="modalImg" onclick="event.stopPropagation()">
+    </div>
+
+    <div class="profile-card">
+        <div id="avatar-preview-container">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="Avatar" class="profile-avatar-large" id="avatar-preview" 
+                     style="object-fit:cover; display:block;" onclick="openModal(this.src)">
+            {% else %}
+                <div class="profile-avatar-large" id="avatar-initials" onclick="alert('Upload a picture to view it full size!')">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+                <img src="" alt="Avatar" class="profile-avatar-large" id="avatar-preview" 
+                     style="object-fit:cover; display:none;" onclick="openModal(this.src)">
+            {% endif %}
+        </div>
+        <h2>{{ user.get_full_name|default:user.username }}</h2>
+        <p class="profile-email">{{ user.email }}</p>
+        <div class="profile-badge badge-{{ profile.level }}">{{ profile.get_level_display }}</div>
+        <div class="profile-stats-mini">
+            <div class="stat-mini">
+                <span class="stat-num">{{ profile.points }}</span>
+                <span class="stat-lbl">Points</span>
+            </div>
+            <div class="stat-mini">
+                <span class="stat-num">{{ profile.streak_days }}</span>
+                <span class="stat-lbl">Day Streak</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-form-card">
+        <h3>Edit Profile</h3>
+        <form method="post" class="auth-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Profile Picture</label>
+                <input type="file" name="avatar" id="avatar-input" accept="image/*" style="font-size: 14px; padding: 10px;">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="First name">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="Last name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ user.email }}" placeholder="Email address">
+            </div>
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea name="bio" rows="3" placeholder="Tell us about yourself...">{{ profile.bio }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Level</label>
+                <select name="level">
+                    <option value="beginner" {% if profile.level == 'beginner' %}selected{% endif %}>Beginner</option>
+                    <option value="intermediate" {% if profile.level == 'intermediate' %}selected{% endif %}>Intermediate</option>
+                    <option value="advanced" {% if profile.level == 'advanced' %}selected{% endif %}>Advanced</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('avatar-input').onchange = function (evt) {
+    const [file] = evt.target.files;
+    if (file) {
+        const previewEl = document.getElementById('avatar-preview');
+        const initialsEl = document.getElementById('avatar-initials');
+        
+        previewEl.src = URL.createObjectURL(file);
+        previewEl.style.display = 'block';
+        if (initialsEl) initialsEl.style.display = 'none';
+        
+        // Cleanup URL after load
+        previewEl.onload = () => URL.revokeObjectURL(previewEl.src);
+    }
+}
+
+function openModal(src) {
+    if (!src) return;
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    modal.classList.add('show');
+    modalImg.src = src;
+}
+
+function closeModal() {
+    document.getElementById('imageModal').classList.remove('show');
+}
+</script>
+{% endblock %}

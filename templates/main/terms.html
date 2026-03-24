@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Terms & Conditions - PlaceForge AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; width: 100%; padding-bottom: 3rem;">
+    <div style="background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 3rem; border: 1px solid var(--border);">
+        <div class="page-header" style="justify-content: center; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+            <h1 style="color: var(--text);">Terms &amp; Conditions</h1>
+            <p style="margin-top: 0.5rem;">Last Updated: January 1, 2026</p>
+        </div>
+        
+        <div style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; display: flex; flex-direction: column; gap: 1.5rem;">
+            <h2 style="color: var(--primary);">1. Acceptance of Terms</h2>
+            <p>By accessing and using PlaceForge AI, you accept and agree to be bound by the terms and provisions of this agreement.</p>
+
+            <h2 style="color: var(--primary);">2. Platform Usage</h2>
+            <p>You agree to use this platform strictly for educational purposes. Any manipulation of the gamification system, scraping of proprietary questions, or abusive behavior will result in account termination.</p>
+
+            <h2 style="color: var(--primary);">3. Intellectual Property</h2>
+            <p>All content on PlaceForge AI, including but not limited to the codebase, practice questions, and design layouts, is the intellectual property of PlaceForge AI unless explicitly stated otherwise.</p>
+
+            <h2 style="color: var(--primary);">4. AI Advice Disclaimer</h2>
+            <p>The internal Ollama models are meant for educational guidance. We are not responsible for logical inaccuracies in AI-generated explanations. You should always verify critical information yourself.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

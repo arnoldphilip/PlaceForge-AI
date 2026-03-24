@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Progress Tracker - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Progress Tracker</h1>
+    <p>Monitor your learning journey</p>
+</div>
+<div class="progress-cards">
+{% for prog in progress_list %}
+<div class="progress-card large">
+    <div class="prog-header">
+        <span class="prog-icon">{% if prog.course.category == 'aptitude' %}💡{% elif prog.course.category == 'verbal' %}💬{% else %}⚙️{% endif %}</span>
+        <span class="prog-cat">{{ prog.course.get_category_display }}</span>
+        <span class="prog-pct">{{ prog.accuracy }}%</span>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:{{ prog.accuracy }}%"></div></div>
+    <div class="prog-footer"><span>{{ prog.questions_attempted }} attempted</span><span>{{ prog.questions_correct }} correct</span></div>
+</div>
+{% empty %}<div class="empty-state"><p>No progress yet. <a href="{% url 'dashboard:practice' %}">Start practicing!</a></p></div>
+{% endfor %}
+</div>
+<h2 style="margin-top:2rem">Recent Mock Tests</h2>
+<div class="table-card">
+<table class="data-table">
+<thead><tr><th>Category</th><th>Score</th><th>Date</th></tr></thead>
+<tbody>
+{% for test in mock_tests %}
+<tr><td>{{ test.course.get_category_display }}</td><td>{{ test.score }}/{{ test.total_questions }}</td><td>{{ test.completed_at|date:"M d, Y" }}</td></tr>
+{% empty %}<tr><td colspan="3" style="text-align:center">No tests taken yet</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

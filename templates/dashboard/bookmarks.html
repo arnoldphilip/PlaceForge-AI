@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Bookmarks - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Bookmarks</h1><p>Your saved questions for revision</p></div>
+<div class="questions-list">
+{% for bm in bookmarks %}
+<div class="question-card">
+    <div class="question-header">
+        <span class="q-number">{{ bm.question.course.get_category_display }}</span>
+        <span class="q-difficulty diff-{{ bm.question.difficulty }}">{{ bm.question.get_difficulty_display }}</span>
+        <a href="{% url 'dashboard:toggle_bookmark' bm.question.id %}" class="bookmark-btn active" title="Remove Bookmark">🔖</a>
+    </div>
+    <p class="question-text">{{ bm.question.text }}</p>
+    <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(this, '{{ bm.question.correct_answer }}', 'A')"><span class="opt-label">A</span> {{ bm.question.option_a }}</button>
+        <button class="option-btn" onclick="selectOption(this, '{{ bm.question.correct_answer }}', 'B')"><span class="opt-label">B</span> {{ bm.question.option_b }}</button>
+        <button class="option-btn" onclick="selectOption(this, '{{ bm.question.correct_answer }}', 'C')"><span class="opt-label">C</span> {{ bm.question.option_c }}</button>
+        <button class="option-btn" onclick="selectOption(this, '{{ bm.question.correct_answer }}', 'D')"><span class="opt-label">D</span> {{ bm.question.option_d }}</button>
+    </div>
+</div>
+{% empty %}<div class="empty-state-large"><div class="empty-icon">🔖</div><h3>No bookmarks yet</h3><p>Bookmark questions during practice to review them here.</p></div>{% endfor %}
+</div>
+{% endblock %}
+{% block extra_js %}<script>function selectOption(btn, correct, chosen){const card=btn.closest('.question-card');const opts=card.querySelectorAll('.option-btn');opts.forEach(o=>o.disabled=true);if(chosen===correct){btn.classList.add('correct');}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.textContent.trim().startsWith(correct))o.classList.add('correct');});}}</script>{% endblock %}

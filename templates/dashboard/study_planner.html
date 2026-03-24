@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Study Planner - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Study Planner</h1><p>Organize your study schedule</p></div>
+<div class="planner-layout">
+<div class="planner-form-card">
+    <h3>Add Study Plan</h3>
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group"><label>Title</label><input type="text" name="title" placeholder="e.g. Practice 20 aptitude questions" required></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="2" placeholder="What do you plan to study?"></textarea></div>
+        <div class="form-group"><label>Course</label><select name="course_id"><option value="">Select course</option>{% for c in courses %}<option value="{{ c.id }}">{{ c.get_category_display }} - {{ c.title }}</option>{% endfor %}</select></div>
+        <div class="form-group"><label>Scheduled Date</label><input type="date" name="scheduled_date" required></div>
+        <button type="submit" class="btn btn-primary">Add Plan</button>
+    </form>
+</div>
+<div class="planner-list">
+    <h3>Your Plans</h3>
+    {% for plan in plans %}
+    <div class="plan-card {% if plan.is_completed %}completed{% endif %}">
+        <div class="plan-status">{% if plan.is_completed %}✅{% else %}📅{% endif %}</div>
+        <div class="plan-details">
+            <div class="plan-title">{{ plan.title }}</div>
+            {% if plan.description %}<div class="plan-desc">{{ plan.description }}</div>{% endif %}
+            <div class="plan-date">{{ plan.scheduled_date }}</div>
+        </div>
+    </div>
+    {% empty %}<div class="empty-small">No plans yet. Add one to get started!</div>{% endfor %}
+</div>
+</div>
+{% endblock %}

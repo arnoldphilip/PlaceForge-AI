@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Search - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Search Results</h1><p>{% if query %}Results for "{{ query }}"{% else %}Search for topics, questions, or concepts{% endif %}</p></div>
+<form action="{% url 'dashboard:search' %}" method="get" class="search-page-form">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search topics, questions, or concepts..." class="search-input-large">
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+{% if query %}
+{% if courses %}<h3>Courses</h3><div class="search-results">{% for c in courses %}<div class="result-card"><div class="result-icon">📚</div><div><strong>{{ c.title }}</strong><p>{{ c.get_category_display }} • {{ c.difficulty }}</p></div></div>{% endfor %}</div>{% endif %}
+{% if questions %}<h3>Questions</h3><div class="questions-list">{% for q in questions %}<div class="question-card"><p class="question-text">{{ q.text }}</p><span class="q-difficulty diff-{{ q.difficulty }}">{{ q.get_difficulty_display }}</span></div>{% endfor %}</div>{% endif %}
+{% if not courses and not questions %}<div class="empty-state-large"><div class="empty-icon">🔍</div><h3>No results found</h3><p>Try different keywords or browse categories.</p></div>{% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Leaderboard - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+{% block content %}
+<div class="page-header"><h1>🏆 Leaderboard</h1><p>See how you rank among other learners</p></div>
+<div class="leaderboard-card">
+    <div class="lb-header"><span>Rank</span><span>User</span><span>Level</span><span>Points</span></div>
+    {% for lp in top_users %}
+    <div class="lb-row {% if lp.user == request.user %}lb-me{% endif %}">
+        <span class="lb-rank">{% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}#{{ forloop.counter }}{% endif %}</span>
+        <span class="lb-name">
+            <div class="lb-avatar">{{ lp.user.first_name|first|default:lp.user.username|first|upper }}</div>
+            {{ lp.user.get_full_name|default:lp.user.username }}
+            {% if lp.user == request.user %}<span class="you-badge">You</span>{% endif %}
+        </span>
+        <span class="lb-level"><span class="badge-{{ lp.level }}">{{ lp.get_level_display }}</span></span>
+        <span class="lb-pts">⭐ {{ lp.points }}</span>
+    </div>
+    {% empty %}<div class="empty-state"><p>No users on the leaderboard yet. Start practicing to earn points!</p></div>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-user-info">
+        <div class="header-avatar-container">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="Avatar" class="header-avatar" id="dashboard-avatar">
+            {% else %}
+                <div class="header-avatar-placeholder" id="dashboard-avatar-placeholder">{{ user.first_name|first|default:user.username|first|upper }}</div>
+            {% endif %}
+            <label for="quick-avatar-input" class="avatar-edit-badge" title="Quick Upload">✏️</label>
+            <form id="quick-avatar-form" method="post" action="{% url 'accounts:profile' %}" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <input type="file" name="avatar" id="quick-avatar-input" accept="image/*" onchange="document.getElementById('quick-avatar-form').submit();">
+                <input type="hidden" name="next" value="{{ request.path }}">
+            </form>
+        </div>
+        <div>
+            <h1>Welcome back, {{ user.first_name|default:user.username }}! 👋</h1>
+            <p>Here's your learning summary for today</p>
+        </div>
+    </div>
+    <div class="header-meta">
+        <span class="points-badge">⭐ {{ profile.points }} pts</span>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-row">
+    <div class="stat-card stat-blue">
+        <div class="stat-icon">✏️</div>
+        <div class="stat-body">
+            <div class="stat-value">{{ total_attempted }}</div>
+            <div class="stat-label">Questions Attempted</div>
+        </div>
+    </div>
+    <div class="stat-card stat-green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-body">
+            <div class="stat-value">{{ total_correct }}</div>
+            <div class="stat-label">Correct Answers</div>
+        </div>
+    </div>
+    <div class="stat-card stat-orange">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-body">
+            <div class="stat-value">{{ accuracy }}%</div>
+            <div class="stat-label">Accuracy Rate</div>
+        </div>
+    </div>
+    <div class="stat-card stat-purple">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-body">
+            <div class="stat-value">{{ profile.streak_days }}</div>
+            <div class="stat-label">Day Streak</div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Progress -->
+<div class="section-title-row">
+    <h2>Your Progress</h2>
+    <a href="{% url 'dashboard:progress' %}" class="see-all">See All →</a>
+</div>
+<div class="progress-cards">
+    {% for item in progress_data %}
+    <div class="progress-card">
+        <div class="prog-header">
+            <span class="prog-icon">
+                {% if item.course.category == 'aptitude' %}💡
+                {% elif item.course.category == 'verbal' %}💬
+                {% else %}⚙️{% endif %}
+            </span>
+            <span class="prog-cat">{{ item.course.get_category_display }}</span>
+            <span class="prog-pct">{{ item.progress.accuracy }}%</span>
+        </div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" style="width: {{ item.progress.accuracy }}%"></div>
+        </div>
+        <div class="prog-footer">
+            <span>{{ item.progress.questions_attempted }} attempted</span>
+            <span>{{ item.progress.questions_correct }} correct</span>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <p>No progress yet. <a href="{% url 'dashboard:practice' %}">Start practicing!</a></p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Category Action Cards -->
+<div class="section-title-row">
+    <h2>Start Learning</h2>
+</div>
+<div class="action-cards-grid">
+    <div class="action-card card-aptitude">
+        <div class="action-icon">💡</div>
+        <h3>Aptitude</h3>
+        <p>Sharpen your logical and problem-solving skills</p>
+        <a href="{% url 'dashboard:practice' %}?category=aptitude" class="card-btn">Start Practice</a>
+    </div>
+    <div class="action-card card-verbal">
+        <div class="action-icon">💬</div>
+        <h3>Verbal</h3>
+        <p>Improve grammar, vocabulary, and communication</p>
+        <a href="{% url 'dashboard:practice' %}?category=verbal" class="card-btn">Explore Topics</a>
+    </div>
+    <div class="action-card card-tech">
+        <div class="action-icon">⚙️</div>
+        <h3>Tech</h3>
+        <p>Master programming, core subjects, and coding challenges</p>
+        <a href="{% url 'dashboard:practice' %}?category=tech" class="card-btn">Start Coding</a>
+    </div>
+</div>
+
+<!-- Bottom Row -->
+<div class="bottom-row">
+    <!-- Upcoming Study Plans -->
+    <div class="bottom-card">
+        <div class="section-title-row">
+            <h3>Upcoming Study Plans</h3>
+            <a href="{% url 'dashboard:study_planner' %}" class="see-all">View All →</a>
+        </div>
+        {% for plan in upcoming_plans %}
+        <div class="plan-item">
+            <div class="plan-dot"></div>
+            <div class="plan-info">
+                <div class="plan-title">{{ plan.title }}</div>
+                <div class="plan-date">📅 {{ plan.scheduled_date }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-small">No upcoming plans. <a href="{% url 'dashboard:study_planner' %}">Add one!</a></div>
+        {% endfor %}
+    </div>
+
+    <!-- Recent Tests -->
+    <div class="bottom-card">
+        <div class="section-title-row">
+            <h3>Recent Mock Tests</h3>
+            <a href="{% url 'dashboard:mock_test' %}" class="see-all">Take Test →</a>
+        </div>
+        {% for test in recent_tests %}
+        <div class="test-item">
+            <div class="test-icon">📝</div>
+            <div class="test-info">
+                <div class="test-title">{{ test.course.get_category_display }} Test</div>
+                <div class="test-score">{{ test.score }}/{{ test.total_questions }} — {{ test.completed_at|date:"M d" }}</div>
+            </div>
+            <div class="test-pct {% if test.score >= test.total_questions|floatformat %}pass{% else %}fail{% endif %}">
+                {% if test.total_questions > 0 %}{{ test.score|floatformat:0 }}{% else %}0{% endif %}/{{ test.total_questions }}
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-small">No tests yet. <a href="{% url 'dashboard:mock_test' %}">Take a mock test!</a></div>
+        {% endfor %}
+    </div>
+
+    <!-- Mini Leaderboard -->
+    <div class="bottom-card">
+        <div class="section-title-row">
+            <h3>Leaderboard</h3>
+            <a href="{% url 'dashboard:leaderboard' %}" class="see-all">Full Board →</a>
+        </div>
+        {% for lp in leaderboard %}
+        <div class="leader-item {% if lp.user == user %}leader-me{% endif %}">
+            <span class="leader-rank">
+                {% if forloop.counter == 1 %}🥇
+                {% elif forloop.counter == 2 %}🥈
+                {% elif forloop.counter == 3 %}🥉
+                {% else %}#{{ forloop.counter }}{% endif %}
+            </span>
+            <span class="leader-name">{{ lp.user.get_full_name|default:lp.user.username }}</span>
+            <span class="leader-pts">{{ lp.points }} pts</span>
+        </div>
+        {% empty %}
+        <div class="empty-small">No rankings yet. Earn points to appear here!</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

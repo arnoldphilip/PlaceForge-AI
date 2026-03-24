@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}AI Assistant - PlayForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>🤖 AI Assistant</h1>
+        <p>Powered by Ollama Llama3 — Ask me anything!</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--text-secondary);">
+        <div id="statusDot" style="width:8px;height:8px;border-radius:50%;background:#94a3b8;"></div>
+        <span id="statusText">Checking AI...</span>
+        <button onclick="clearChat()" class="btn btn-outline" style="font-size:0.78rem;padding:0.3rem 0.75rem;margin-left:0.5rem;">🗑 Clear</button>
+    </div>
+</div>
+
+<div class="chatbot-page">
+    <div class="chat-history" id="chatHistory">
+        <div class="chat-message bot-message">
+            <div class="chat-avatar bot-av">🤖</div>
+            <div class="chat-bubble">Hello {{ user.first_name|default:user.username }}! I'm your PlaceForge AI Assistant powered by Llama3.
+I can help you with:
+• 💡 Aptitude (percentages, ratios, time &amp; work, puzzles)
+• 💬 Verbal (grammar, vocabulary, comprehension)
+• ⚙️ Tech (DSA, Python, SQL, OS, System Design)
+• Any general question!
+
+What would you like to learn today?</div>
+        </div>
+
+        {% for msg in messages_history %}
+        <div class="chat-message user-message">
+            <div class="chat-bubble">{{ msg.message }}</div>
+            <div class="chat-avatar user-av">{{ user.first_name|first|default:user.username|first|upper }}</div>
+        </div>
+        <div class="chat-message bot-message">
+            <div class="chat-avatar bot-av">🤖</div>
+            <div class="chat-bubble cw-markdown init-bot-msg">{{ msg.response }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="chat-suggestions">
+        <button class="suggestion-chip" onclick="askSuggestion('Explain time and work problems with shortcut tricks')">⏱ Time & Work</button>
+        <button class="suggestion-chip" onclick="askSuggestion('What is a binary search tree? Explain with example')">🌳 BST</button>
+        <button class="suggestion-chip" onclick="askSuggestion('Explain SQL JOIN types with examples')">🗄️ SQL Joins</button>
+        <button class="suggestion-chip" onclick="askSuggestion('How to improve verbal ability for placement exams?')">📖 Verbal Tips</button>
+        <button class="suggestion-chip" onclick="askSuggestion('What is deadlock in OS and how to prevent it?')">💻 Deadlock</button>
+        <button class="suggestion-chip" onclick="askSuggestion('Solve: If 20% of a number is 80, find the number')">🧮 Math</button>
+    </div>
+
+    <div class="chat-input-bar">
+        <input type="text" id="chatInput" placeholder="Ask me anything — aptitude, tech, verbal..." onkeypress="handleEnter(event)" autofocus>
+        <button onclick="sendMessage()" class="btn btn-primary" id="sendBtn">Ask Now ➤</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+.chat-input-bar input {
+    flex: 0 1 50% !important;
+    min-width: 300px;
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.chat-input-bar input:focus {
+    flex: 1 1 100% !important;
+    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.2) !important;
+    transform: translateY(-2px);
+}
+.chat-input-bar {
+    justify-content: center;
+    transition: all 0.3s;
+}
+</style>
+<script>
+const SEND_URL  = "{% url 'chatbot:send_message' %}";
+const CLEAR_URL = "{% url 'chatbot:clear_chat' %}";
+const CSRF_TOKEN = "{{ csrf_token }}";
+const USER_INIT = "{{ user.first_name|first|default:user.username|first|upper }}";
+
+// Check Ollama status on load
+async function checkStatus() {
+    try {
+        const r = await fetch(SEND_URL, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json','X-CSRFToken':CSRF_TOKEN},
+            body: JSON.stringify({message: '__ping__'})
+        });
+        const d = await r.json();
+        const dot = document.getElementById('statusDot');
+        const txt = document.getElementById('statusText');
+        if (d.from_ai) { dot.style.background='#34c47c'; txt.textContent='Llama3 Connected'; }
+        else            { dot.style.background='#f59e0b'; txt.textContent='Fallback Mode'; }
+    } catch(e) { document.getElementById('statusText').textContent='Offline'; }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+    input.disabled = true;
+    document.getElementById('sendBtn').disabled = true;
+
+    addMessage(msg, 'user');
+    const typing = addTyping();
+
+    try {
+        const res = await fetch(SEND_URL, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json','X-CSRFToken':CSRF_TOKEN},
+            body: JSON.stringify({message: msg})
+        });
+        const data = await res.json();
+        typing.remove();
+        addMessage(data.response || 'Sorry, no response received.', 'bot', data.from_ai);
+    } catch(e) {
+        typing.remove();
+        addMessage('Connection error. Please check if the server is running.', 'bot', false);
+    } finally {
+        input.disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        input.focus();
+    }
+}
+
+function addMessage(text, role, fromAI) {
+    const history = document.getElementById('chatHistory');
+    const div = document.createElement('div');
+    div.className = 'chat-message ' + role + '-message';
+    if (role === 'bot') {
+        const aiTag = fromAI !== undefined
+            ? (fromAI ? '<div style="font-size:0.72rem;color:#34c47c;margin-top:0.3rem;padding-left:2px;">✦ Llama3 AI</div>'
+                      : '<div style="font-size:0.72rem;color:#94a3b8;margin-top:0.3rem;padding-left:2px;">⚡ Fallback</div>')
+            : '';
+        const output = window.marked ? marked.parse(text) : escHtml(text);
+        div.innerHTML = '<div class="chat-avatar bot-av">🤖</div><div><div class="chat-bubble cw-markdown" style="font-size: 15px; line-height: 1.5;">' + output + '</div>' + aiTag + '</div>';
+    } else {
+        div.innerHTML = '<div class="chat-bubble">' + escHtml(text) + '</div><div class="chat-avatar user-av">' + USER_INIT + '</div>';
+    }
+    history.appendChild(div);
+    history.scrollTop = history.scrollHeight;
+    return div;
+}
+
+function addTyping() {
+    const history = document.getElementById('chatHistory');
+    const div = document.createElement('div');
+    div.className = 'chat-message bot-message';
+    div.innerHTML = '<div class="chat-avatar bot-av">🤖</div><div class="chat-bubble"><span class="typing-dots"><span>●</span><span>●</span><span>●</span></span></div>';
+    history.appendChild(div);
+    history.scrollTop = history.scrollHeight;
+    return div;
+}
+
+function escHtml(t) {
+    const d = document.createElement('div');
+    d.innerText = t;
+    return d.innerHTML.replace(/\n/g, '<br>');
+}
+
+function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+
+function askSuggestion(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+}
+
+async function clearChat() {
+    if (!confirm('Clear all chat history?')) return;
+    await fetch(CLEAR_URL, {method:'POST', headers:{'X-CSRFToken':CSRF_TOKEN}});
+    const h = document.getElementById('chatHistory');
+    h.innerHTML = '<div class="chat-message bot-message"><div class="chat-avatar bot-av">🤖</div><div class="chat-bubble">Chat cleared! How can I help you?</div></div>';
+}
+
+document.getElementById('chatHistory').scrollTop = 99999;
+
+// Parse history messages
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.marked) {
+        document.querySelectorAll('.init-bot-msg').forEach(el => {
+            el.innerHTML = marked.parse(el.textContent);
+        });
+    }
+});
+
+setTimeout(checkStatus, 600);
+</script>
+{% endblock %}

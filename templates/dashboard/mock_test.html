@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block title %}Mock Test - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Mock Tests 📝</h1>
+        <p>Timed exam — answers shown in <strong style="color:#16a34a;">green</strong> (correct) and <strong style="color:#dc2626;">red</strong> (wrong)</p>
+    </div>
+    {% if questions %}<div class="timer-display" id="timerDisplay">⏱ <span id="timer">20:00</span></div>{% endif %}
+</div>
+
+<div class="filter-bar">
+    <div class="filter-tabs">
+        <a href="?category=aptitude" class="filter-tab {% if category == 'aptitude' %}active{% endif %}">💡 Aptitude</a>
+        <a href="?category=verbal"   class="filter-tab {% if category == 'verbal'   %}active{% endif %}">💬 Verbal</a>
+        <a href="?category=tech"     class="filter-tab {% if category == 'tech'     %}active{% endif %}">⚙️ Tech</a>
+    </div>
+</div>
+
+{% if questions %}
+<form method="post" action="{% url 'dashboard:submit_test' %}" id="testForm">
+    {% csrf_token %}
+    <input type="hidden" name="category"   value="{{ category }}">
+    <input type="hidden" name="score"      id="scoreInput" value="0">
+    <input type="hidden" name="total"      value="{{ questions|length }}">
+    <input type="hidden" name="time_taken" id="timeTakenInput" value="0">
+
+    <div class="questions-list" id="testQuestions">
+        {% for question in questions %}
+        <div class="question-card" id="card{{ question.id }}" data-correct="{{ question.correct_answer|upper }}">
+            <div class="question-header">
+                <span class="q-number">Q{{ forloop.counter }} of {{ questions|length }}</span>
+                <span class="q-difficulty diff-{{ question.difficulty }}">{{ question.get_difficulty_display }}</span>
+                <span id="result{{ question.id }}" style="margin-left:auto;font-size:0.82rem;font-weight:700;"></span>
+            </div>
+            <p class="question-text">{{ question.text }}</p>
+            <div class="options-grid" id="opts{{ question.id }}">
+                <label class="option-label" onclick="pickAnswer(event,'{{ question.id }}','A')">
+                    <input type="radio" name="q{{ question.id }}" value="A">
+                    <span class="opt-label">A.</span> {{ question.option_a }}
+                </label>
+                <label class="option-label" onclick="pickAnswer(event,'{{ question.id }}','B')">
+                    <input type="radio" name="q{{ question.id }}" value="B">
+                    <span class="opt-label">B.</span> {{ question.option_b }}
+                </label>
+                <label class="option-label" onclick="pickAnswer(event,'{{ question.id }}','C')">
+                    <input type="radio" name="q{{ question.id }}" value="C">
+                    <span class="opt-label">C.</span> {{ question.option_c }}
+                </label>
+                <label class="option-label" onclick="pickAnswer(event,'{{ question.id }}','D')">
+                    <input type="radio" name="q{{ question.id }}" value="D">
+                    <span class="opt-label">D.</span> {{ question.option_d }}
+                </label>
+            </div>
+            {% if question.explanation %}
+            <div class="explanation" style="display:none" id="exp{{ question.id }}">
+                <strong>💡 Explanation:</strong> {{ question.explanation }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="test-submit-bar" style="margin-top:1.5rem;display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:var(--radius);padding:1rem 1.5rem;box-shadow:var(--shadow);">
+        <div>
+            <span style="font-weight:600;color:var(--text-secondary);" id="liveScore">Score: 0 &nbsp;|&nbsp; Answered: 0/{{ questions|length }}</span>
+        </div>
+        <button type="button" onclick="submitTest()" class="btn btn-primary btn-large">Finish & Submit →</button>
+    </div>
+</form>
+
+<!-- Result Modal -->
+<div id="resultModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:var(--radius);padding:2.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);animation:popIn 0.3s ease;">
+        <div id="scoreCircle" style="width:110px;height:110px;border-radius:50%;margin:0 auto 1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid #16a34a;background:#dcfce7;">
+            <div id="modalScoreNum" style="font-family:'Space Grotesk',sans-serif;font-size:1.9rem;font-weight:800;line-height:1;">0/0</div>
+            <div id="modalPct" style="font-size:0.78rem;font-weight:600;opacity:0.75;">0%</div>
+        </div>
+        <h2 id="resultTitle" style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;margin-bottom:0.5rem;">Test Complete!</h2>
+        <p id="resultMsg" style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1.5rem;"></p>
+        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+            <button onclick="submitNow()" class="btn btn-primary">Save Result →</button>
+            <a href="?category={{ category }}" class="btn btn-outline">Try Again</a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes popIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+</style>
+
+{% else %}
+<div class="empty-state-large">
+    <div class="empty-icon">📝</div>
+    <h3>No Questions Available</h3>
+    <p>Questions for this category haven't been added yet.</p>
+    {% if user.is_staff %}<a href="/admin/dashboard/question/add/" class="btn btn-primary" style="margin-top:1rem;">+ Add Questions</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const TOTAL = {{ questions|length|default:0 }};
+let timeLeft = 20*60, timeTaken = 0, score = 0, answered = 0, done = {};
+let timerInterval;
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--; timeTaken++;
+        const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+        const s = String(timeLeft%60).padStart(2,'0');
+        const el = document.getElementById('timer');
+        if (el) el.textContent = m+':'+s;
+        if (timeLeft <= 300) { const td = document.getElementById('timerDisplay'); if(td) td.style.background='#fee2e2'; td.style.color='#dc2626'; }
+        if (timeLeft <= 0) { clearInterval(timerInterval); showResult(true); }
+    }, 1000);
+}
+
+function pickAnswer(e, qid, chosen) {
+    e.preventDefault();
+    if (done[qid]) return;
+    done[qid] = chosen;
+    const correct = document.getElementById('card'+qid).dataset.correct;
+    const isOK = (chosen === correct);
+    if (isOK) score++;
+    answered++;
+
+    // Color all 4 labels
+    const opts = document.getElementById('opts'+qid);
+    opts.querySelectorAll('.option-label').forEach(lbl => {
+        lbl.style.pointerEvents = 'none';
+        const optVal = lbl.querySelector('input[type=radio]').value;
+        if (optVal === correct) lbl.classList.add('correct');
+        else if (optVal === chosen && !isOK) lbl.classList.add('wrong');
+    });
+
+    // Show result badge
+    const res = document.getElementById('result'+qid);
+    if (res) res.innerHTML = isOK
+        ? '<span style="color:#16a34a;">✓ Correct</span>'
+        : '<span style="color:#dc2626;">✗ Wrong</span>';
+
+    // Show explanation
+    const exp = document.getElementById('exp'+qid);
+    if (exp) exp.style.display = 'block';
+
+    document.getElementById('scoreInput').value = score;
+    document.getElementById('liveScore').textContent = 'Score: '+score+' | Answered: '+answered+'/'+TOTAL;
+
+    if (answered === TOTAL) { clearInterval(timerInterval); setTimeout(() => showResult(false), 500); }
+}
+
+function showResult(auto) {
+    const pct = TOTAL > 0 ? Math.round(score/TOTAL*100) : 0;
+    document.getElementById('modalScoreNum').textContent = score+'/'+TOTAL;
+    document.getElementById('modalPct').textContent = pct+'%';
+    const circle = document.getElementById('scoreCircle');
+    if (pct >= 70) {
+        circle.style.borderColor='#16a34a'; circle.style.background='#dcfce7';
+        document.getElementById('resultTitle').textContent = '🎉 Excellent Work!';
+        document.getElementById('resultMsg').textContent = 'Outstanding! Keep up the great work.';
+    } else if (pct >= 40) {
+        circle.style.borderColor='#f59e0b'; circle.style.background='#fef9c3';
+        document.getElementById('resultTitle').textContent = '👍 Good Effort!';
+        document.getElementById('resultMsg').textContent = 'You\'re improving! Review the explanations below.';
+    } else {
+        circle.style.borderColor='#dc2626'; circle.style.background='#fee2e2';
+        document.getElementById('resultTitle').textContent = '📚 Keep Practicing!';
+        document.getElementById('resultMsg').textContent = 'Review the explanations and try again.';
+    }
+    const modal = document.getElementById('resultModal');
+    modal.style.display = 'flex';
+    if (auto) setTimeout(submitNow, 3000);
+}
+
+function submitNow() {
+    document.getElementById('timeTakenInput').value = timeTaken;
+    document.getElementById('scoreInput').value = score;
+    document.getElementById('testForm').submit();
+}
+
+function submitTest() { clearInterval(timerInterval); showResult(false); }
+
+if (TOTAL > 0) startTimer();
+</script>
+{% endblock %}

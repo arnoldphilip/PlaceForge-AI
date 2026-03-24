@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Privacy Policy - PlaceForge AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; width: 100%; padding-bottom: 3rem;">
+    <div style="background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 3rem; border: 1px solid var(--border);">
+        <div class="page-header" style="justify-content: center; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+            <h1 style="color: var(--text);">Privacy Policy</h1>
+            <p style="margin-top: 0.5rem;">Effective Date: January 1, 2026</p>
+        </div>
+        
+        <div style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; display: flex; flex-direction: column; gap: 1.5rem;">
+            <h2 style="color: var(--primary);">1. Information We Collect</h2>
+            <p>We collect your registration details (such as username and email), usage statistics across courses, and quiz results to personalize your learning experience. Our local AI models process your inputs directly on your server, ensuring conversations remain private.</p>
+
+            <h2 style="color: var(--primary);">2. How We Use Your Information</h2>
+            <p>We use your data solely to provide, maintain, and improve the personalized tutoring capabilities and progress tracking features of the PlaceForge AI platform.</p>
+
+            <h2 style="color: var(--primary);">3. Data Security</h2>
+            <p>We implement standard industry protocols to protect your data. Since our Llama3 integration runs locally on your machine, no chat transcript data is ever sent to external third-party cloud AI vendors.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

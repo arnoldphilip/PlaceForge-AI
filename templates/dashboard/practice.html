@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Practice Questions - PlaceForge AI{% endblock %}
+{% block wrapper_class %}dashboard-wrapper{% endblock %}
+{% block sidebar %}{% include 'components/sidebar.html' %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Practice Questions ✏️</h1>
+        <p>Select an answer — <strong style="color:#16a34a;">green = correct</strong>, <strong style="color:#dc2626;">red = wrong</strong></p>
+    </div>
+</div>
+
+<div class="filter-bar">
+    <div class="filter-tabs">
+        <a href="?category=aptitude{% if difficulty %}&difficulty={{ difficulty }}{% endif %}" class="filter-tab {% if category == 'aptitude' %}active{% endif %}">💡 Aptitude</a>
+        <a href="?category=verbal{% if difficulty %}&difficulty={{ difficulty }}{% endif %}"   class="filter-tab {% if category == 'verbal'   %}active{% endif %}">💬 Verbal</a>
+        <a href="?category=tech{% if difficulty %}&difficulty={{ difficulty }}{% endif %}"     class="filter-tab {% if category == 'tech'     %}active{% endif %}">⚙️ Tech</a>
+    </div>
+    <div class="filter-tabs">
+        <a href="?category={{ category }}"                   class="filter-tab {% if not difficulty %}active{% endif %}">All</a>
+        <a href="?category={{ category }}&difficulty=easy"   class="filter-tab {% if difficulty == 'easy'   %}active{% endif %}">Easy</a>
+        <a href="?category={{ category }}&difficulty=medium" class="filter-tab {% if difficulty == 'medium' %}active{% endif %}">Medium</a>
+        <a href="?category={{ category }}&difficulty=hard"   class="filter-tab {% if difficulty == 'hard'   %}active{% endif %}">Hard</a>
+    </div>
+    {% if questions %}
+    <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center;font-size:0.85rem;">
+        <span style="background:#dcfce7;color:#16a34a;padding:0.25rem 0.7rem;border-radius:999px;font-weight:700;">✓ <span id="cCount">0</span></span>
+        <span style="background:#fee2e2;color:#dc2626;padding:0.25rem 0.7rem;border-radius:999px;font-weight:700;">✗ <span id="wCount">0</span></span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="questions-list">
+    {% for question in questions %}
+    <div class="question-card" id="qc{{ question.id }}">
+        <div class="question-header">
+            <span class="q-number">Q{{ forloop.counter }}</span>
+            <span class="q-difficulty diff-{{ question.difficulty }}">{{ question.get_difficulty_display }}</span>
+            <button class="bookmark-btn {% if question.id in bookmarked_ids %}bookmarked{% endif %}"
+                    id="bm{{ question.id }}"
+                    onclick="toggleBM({{ question.id }}, this)"
+                    title="Bookmark this question">
+                {% if question.id in bookmarked_ids %}🔖{% else %}🏷{% endif %}
+            </button>
+        </div>
+        <p class="question-text">{{ question.text }}</p>
+        <div class="options-grid" id="opts{{ question.id }}">
+            <button class="option-btn" onclick="pick(this,'{{ question.correct_answer|upper }}','A','{{ question.id }}','{{ category }}')">
+                <span class="opt-label">A.</span> {{ question.option_a }}
+            </button>
+            <button class="option-btn" onclick="pick(this,'{{ question.correct_answer|upper }}','B','{{ question.id }}','{{ category }}')">
+                <span class="opt-label">B.</span> {{ question.option_b }}
+            </button>
+            <button class="option-btn" onclick="pick(this,'{{ question.correct_answer|upper }}','C','{{ question.id }}','{{ category }}')">
+                <span class="opt-label">C.</span> {{ question.option_c }}
+            </button>
+            <button class="option-btn" onclick="pick(this,'{{ question.correct_answer|upper }}','D','{{ question.id }}','{{ category }}')">
+                <span class="opt-label">D.</span> {{ question.option_d }}
+            </button>
+        </div>
+        {% if question.explanation %}
+        <div class="explanation" style="display:none" id="exp{{ question.id }}">
+            <strong>💡 Explanation:</strong> {{ question.explanation }}
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="empty-state-large">
+        <div class="empty-icon">📚</div>
+        <h3>No Questions Available Yet</h3>
+        <p>Questions for this category will be added soon!</p>
+        {% if user.is_staff %}<a href="/admin/dashboard/question/add/" class="btn btn-primary" style="margin-top:1rem;">+ Add Questions</a>{% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const UPURL = "{% url 'dashboard:update_progress' %}";
+const BMURL = "/dashboard/bookmark/";
+const CSRF  = "{{ csrf_token }}";
+let correct = 0, wrong = 0;
+
+function pick(btn, correctAns, chosen, qid, cat) {
+    const grid = document.getElementById('opts' + qid);
+    if (grid.dataset.done) return;
+    grid.dataset.done = '1';
+    const isOK = (chosen === correctAns);
+    if (isOK) correct++; else wrong++;
+
+    grid.querySelectorAll('.option-btn').forEach(b => {
+        b.disabled = true;
+        const lbl = b.querySelector('.opt-label').textContent.trim().replace('.','');
+        if (lbl === correctAns) b.classList.add('correct');
+        else if (b === btn && !isOK) b.classList.add('wrong');
+    });
+
+    const exp = document.getElementById('exp' + qid);
+    if (exp) exp.style.display = 'block';
+
+    document.getElementById('cCount').textContent = correct;
+    document.getElementById('wCount').textContent = wrong;
+
+    fetch(UPURL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': CSRF},
+        body: JSON.stringify({category: cat, is_correct: isOK})
+    }).then(r => r.json()).then(data => {
+        if (data.points) {
+            const badge = document.querySelector('.points-badge');
+            if (badge) badge.innerHTML = '⭐ ' + data.points + ' pts';
+        }
+    }).catch(() => {});
+}
+
+function toggleBM(qid, btn) {
+    fetch(BMURL + qid + '/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF}
+    }).then(r => r.json()).then(data => {
+        if (data.status === 'added') {
+            btn.textContent = '🔖';
+            btn.classList.add('bookmarked');
+        } else {
+            btn.textContent = '🏷';
+            btn.classList.remove('bookmarked');
+        }
+    });
+}
+</script>
+{% endblock %}

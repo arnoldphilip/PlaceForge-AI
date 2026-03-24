@@ -1,0 +1,37 @@
+{% load static %}
+<aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+        <a href="{% url 'dashboard:home' %}" class="sidebar-item {% if active_tab == 'dashboard' %}active{% endif %}">
+            <span class="sidebar-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'dashboard:study_planner' %}" class="sidebar-item {% if active_tab == 'study_planner' %}active{% endif %}">
+            <span class="sidebar-icon">📅</span>
+            <span>Study Planner</span>
+        </a>
+        <a href="{% url 'dashboard:practice' %}" class="sidebar-item {% if active_tab == 'practice' %}active{% endif %}">
+            <span class="sidebar-icon">✏️</span>
+            <span>Practice Questions</span>
+        </a>
+        <a href="{% url 'dashboard:mock_test' %}" class="sidebar-item {% if active_tab == 'mock_test' %}active{% endif %}">
+            <span class="sidebar-icon">📝</span>
+            <span>Mock Tests</span>
+        </a>
+        <a href="{% url 'dashboard:progress' %}" class="sidebar-item {% if active_tab == 'progress' %}active{% endif %}">
+            <span class="sidebar-icon">📈</span>
+            <span>Progress Tracker</span>
+        </a>
+        <a href="{% url 'dashboard:bookmarks' %}" class="sidebar-item {% if active_tab == 'bookmarks' %}active{% endif %}">
+            <span class="sidebar-icon">🔖</span>
+            <span>Bookmarks</span>
+        </a>
+        <a href="{% url 'dashboard:leaderboard' %}" class="sidebar-item {% if active_tab == 'leaderboard' %}active{% endif %}">
+            <span class="sidebar-icon">🏆</span>
+            <span>Leaderboard</span>
+        </a>
+        <a href="{% url 'chatbot:chatbot' %}" class="sidebar-item {% if active_tab == 'chatbot' %}active{% endif %}">
+            <span class="sidebar-icon">🤖</span>
+            <span>AI Assistant</span>
+        </a>
+    </nav>
+</aside>
